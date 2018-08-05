@@ -1,5 +1,5 @@
 // Unity LWRP shader
-// Autor : Eugene.Rho
+// Autor : nagnae
 // Thanks to j1jeong & JP.
 //====================================
 
