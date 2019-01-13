@@ -1,4 +1,5 @@
-// Unity 2017,2018 shader
+// Unity LWRP shader
+// SP Version : 2018.1.2
 // Autor : nagnae
 // Thanks to j1jeong & JP.
 //====================================
@@ -21,7 +22,6 @@ import lib-normal.glsl
 //: state cull_face off
 
 //-------- Render ---------------------------------------------------//
-
 //: param custom {
 //:   "default": 0,
 //:   "label": "Alpha threshold",
@@ -29,6 +29,7 @@ import lib-normal.glsl
 //:   "max": 1.0,
 //:   "group": "Render"
 //: }
+
 uniform float alpha_threshold;
 
 //: param custom { "default": false, "label": "Double Sided", "group": "Render" }
@@ -62,7 +63,6 @@ uniform bool useUnityAmbient;
 uniform bool use_unity_skybox_approximate = false;
 
 //-------- Mipmap ----------------------------------------------------//
-
 //: param custom { "default": false, "label": "Use", "group": "Mipmap" }
 uniform bool useMipmap;
 
@@ -96,9 +96,7 @@ uniform float mipmap_end;
 //-: }
 const float mipmap_intensity = 20;
 
-
 //-------- Lights ----------------------------------------------------//
-
 //: param custom { "default": [1.0, 1.0, 1.0], "label": "Direction", "min": -1, "max": 1, "group": "Light" }
 uniform vec3 lightDirection;
 
@@ -208,6 +206,7 @@ half lerp( half a, half b, half t )
 {
 	return mix(a,b,t);
 }
+
 
 half2 lerp( half2 a, half2 b, half t )
 {
@@ -913,7 +912,7 @@ half3 LightweightFragmentPBR(LocalVectors vectors, Light light, half3 albedo, ha
 //------------------------------------------------------------------------------
 
 //- Shader entry point.
-void shade(V2F inputs)
+vec4 shade(V2F inputs)
 {
 	// Apply parallax occlusion mapping if possible
 	//vec3 viewTS = worldSpaceToTangentSpace(getEyeVec(inputs.position), inputs);
@@ -938,11 +937,7 @@ void shade(V2F inputs)
 		discard;
 
 	if( showMipmap )
-	{
-		diffuseShadingOutput(vec3(eye_distance / mipmap_intensity));
-		return;
-		//return vec4(eye_distance / mipmap_intensity);
-	}
+		return vec4(eye_distance / mipmap_intensity);
 
 	//return readTexel_mipmap( normal_texture, normal_size );
 
@@ -976,8 +971,7 @@ void shade(V2F inputs)
 	// Feed parameters for a physically based BRDF integration
 	vec3 color = LightweightFragmentPBR(vectors, mainLight, baseColor, metallic, glossiness, occlusion, emissive );
 
-	diffuseShadingOutput(color);
-	//return vec4(color,1);
+	return vec4(color,1);
 }
 
 //- Entry point of the shadow pass.
